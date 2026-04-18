@@ -51,14 +51,19 @@ cd ecc-harness-qoder-cline
 
 # 2. 安装到 Cline（全局）
 .\scripts\install.ps1 -Editor cline -Type global  # Windows
-./scripts/install.sh --editor cline --type global  # macOS/Linux
 
 # 3. 安装到 Qoder（项目）
 .\scripts\install.ps1 -Editor qoder -Type project  # Windows
-./scripts/install.sh --editor qoder --type project  # macOS/Linux
 
 # 4. 重启编辑器
 ```
+
+### 智能安装特性
+
+- ✅ **备份已有配置** - 安装前自动备份您的原有配置
+- ✅ **智能合并** - 只安装新文件，不覆盖您已有的配置
+- ✅ **详细报告** - 告诉您哪些是新装的，哪些被跳过了
+- ✅ **随时卸载** - 使用卸载脚本可恢复或清除配置
 
 ### 验证安装
 
@@ -162,14 +167,31 @@ cd ecc-harness-qoder-cline
 ### 卸载配置
 
 ```bash
-# 卸载 Cline 配置
-Remove-Item -Path "$env:USERPROFILE\Documents\Cline\Rules" -Recurse -Force
-Remove-Item -Path "$env:USERPROFILE\.cline\skills" -Recurse -Force
+# 查看已安装的配置
+.\scripts\uninstall.ps1 -List
 
-# 卸载 Qoder 配置（项目级）
-Remove-Item -Path ".qoder\rules" -Recurse -Force
-Remove-Item -Path ".qoder\skills" -Recurse -Force
+# 卸载配置（保留备份）
+.\scripts\uninstall.ps1 -Editor cline -Type global
+
+# 从备份恢复原有配置
+.\scripts\uninstall.ps1 -Restore -Editor cline -Type global
+
+# 完全清除（包括备份）
+.\scripts\uninstall.ps1 -Clean -Editor all -Type global
 ```
+
+### 安装/卸载参数说明
+
+| 参数 | 说明 | 可选值 |
+|------|------|--------|
+| `-Editor` | 选择编辑器 | `cline`, `qoder`, `all` |
+| `-Type` | 安装类型 | `global`, `project` |
+| `-Components` | 安装的组件 | `rules`, `skills` (可组合) |
+| `-Force` | 强制覆盖已有文件 | 跳过备份，直接覆盖 |
+| `-SkipBackup` | 跳过备份步骤 | 加快安装速度 |
+| `-Restore` | 从备份恢复 | 恢复原有配置 |
+| `-Clean` | 完全清除 | 删除配置和备份 |
+| `-List` | 列出已安装配置 | 仅查看，不操作 |
 
 ---
 
@@ -184,9 +206,9 @@ ecc-harness-qoder-cline/
 │   ├── rules/                       # 10 个通用规则
 │   ├── skills/                      # 14 个精选技能
 │   └── agents/                      # 10 个核心智能体
-├── scripts/                         # 安装脚本
-│   ├── install.ps1                  # PowerShell 安装脚本
-│   └── install.sh                   # Bash 安装脚本
+├── scripts/                         # 安装和卸载脚本
+│   ├── install.ps1                  # 安装脚本（智能合并，不会覆盖已有配置）
+│   └── uninstall.ps1                # 卸载脚本（支持恢复原有配置）
 └── docs/                            # 详细文档（待补充）
 ```
 
